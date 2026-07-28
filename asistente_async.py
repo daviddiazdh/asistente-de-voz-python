@@ -177,16 +177,17 @@ async def procesar_comando(comando_dictado):
     elif "ofertas" in comando_dictado or "steam" in comando_dictado:
         print("Buscando las mejores ofertas en Steam...")
         
-        # Supongamos que esta función hace la petición a CheapShark y devuelve el JSON
         lista_juegos = obtener_ofertas_steam_api()
         
         # Hacemos que la voz lea solo el top 3
-        hablar("Estas son las tres mejores ofertas en este momento:")
+        top3 = "Estas son las tres mejores ofertas en este momento:\n"
+        
         for juego in lista_juegos[:3]:
             nombre = juego['title']
             descuento = round(float(juego['savings']))
-            hablar(f"{nombre} con un {descuento} por ciento de descuento.")
-        
+            top3 += f"{nombre} con un {descuento} por ciento de descuento.\n"
+
+        hablar(top3)
         hablar("He impreso la lista completa con otras 57 ofertas en tu consola.")
         
         # Imprimimos la lista masiva en la terminal para que la leas con calma
