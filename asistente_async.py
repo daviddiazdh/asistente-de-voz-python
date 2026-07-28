@@ -178,7 +178,7 @@ async def procesar_comando(comando_dictado):
         print("Buscando las mejores ofertas en Steam...")
         
         # Supongamos que esta función hace la petición a CheapShark y devuelve el JSON
-        lista_juegos = await asyncio.to_thread(obtener_ofertas_steam_api)
+        lista_juegos = obtener_ofertas_steam_api()
         
         # Hacemos que la voz lea solo el top 3
         hablar("Estas son las tres mejores ofertas en este momento:")
