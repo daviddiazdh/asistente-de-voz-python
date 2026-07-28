@@ -187,6 +187,9 @@ def decodificar_audio(r, audio):
 
 async def bucle_asistente_async():
     r = sr.Recognizer()
+
+    r.energy_threshold = 150
+    r.dynamic_energy_threshold = True
     
     micros_disponibles = sr.Microphone.list_microphone_names()
     indice_usb = None
