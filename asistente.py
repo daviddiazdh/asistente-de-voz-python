@@ -18,7 +18,7 @@ def hablar(texto):
 
 
 def ejecutar_comando_sistema(comando_dictado):
-    print(f"\n Procesando acción para: '{comando_dictado}'")
+    print(f"\nProcesando acción para: '{comando_dictado}'")
 
     if "hola" in comando_dictado:
         print("¡Hola David! Sistema en línea y escuchando.")
@@ -41,7 +41,7 @@ def ejecutar_comando_sistema(comando_dictado):
         hablar(f"El servidor está usando {usada} megabytes de memoria RAM, de un total de {total} megabytes.")
 
     elif "docker" in comando_dictado or "servicios" in comando_dictado:
-        print("🐳 Contenedores activos en Docker:")
+        print("Contenedores activos en Docker:")
         # Muestra la tabla bonita en consola
         os.system("sudo docker ps --format 'table {{.Names}}\t{{.Status}}'")
         
@@ -56,7 +56,7 @@ def ejecutar_comando_sistema(comando_dictado):
             hablar("No tienes ningún contenedor de Docker activo.")
 
     elif "limpiar" in comando_dictado:
-        print("🧹 Limpiando caché y temporales...")
+        print("Limpiando caché y temporales...")
         os.system("rm -rf /tmp/* 2>/dev/null || true")
         # Aquí no hay nada que capturar, solo confirmamos la acción
         hablar("Los archivos temporales han sido vaciados.")
@@ -117,7 +117,7 @@ def bucle_asistente():
     micros_disponibles = sr.Microphone.list_microphone_names()
     indice_usb = None
     
-    print("🔍 Escaneando hardware de audio...")
+    print("Escaneando hardware de audio...")
     for i, nombre in enumerate(micros_disponibles):
         # Buscamos "USB Audio" o "AB13X" según lo que te arrojó el servidor
         if "USB Audio" in nombre or "AB13X" in nombre:
@@ -153,7 +153,7 @@ def bucle_asistente():
                 
                 # Comprobamos si nos están llamando
                 if "servidor" in texto:
-                    print(f" ¡Te escuché!: \"{texto}\"")
+                    print(f"¡Te escuché!: \"{texto}\"")
                     
                     # Limpiamos la palabra 'servidor' para quedarnos solo con la orden
                     comando = texto.replace("servidor", "").strip()
@@ -162,7 +162,7 @@ def bucle_asistente():
                         ejecutar_comando_sistema(comando)
                     else:
                         hablar("¿Sí?, dime.")
-                        print(" ¿Sí? Dime qué comando quieres ejecutar.")
+                        print("¿Sí? Dime qué comando quieres ejecutar.")
                     
             except sr.UnknownValueError:
                 # El algoritmo ignora si solo hubo un ruido aleatorio o estática corta
@@ -171,7 +171,7 @@ def bucle_asistente():
                 print(f" Error de red: {e}")
                 time.sleep(5) # Espera un poco antes de reintentar si cae el internet
             except KeyboardInterrupt:
-                print("\n Desactivando el asistente en bucle. ¡Nos vemos!")
+                print("\nDesactivando el asistente en bucle. ¡Nos vemos!")
                 break
 
 if __name__ == "__main__":
