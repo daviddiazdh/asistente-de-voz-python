@@ -115,8 +115,8 @@ def ejecutar_comando_sistema(comando_dictado):
         pagina = wiki.page(busqueda)
 
         if pagina.exists():
-            # Tomamos los primeros 1000 caracteres para no llenar el chat
-            resumen = pagina.summary[:1000] + "..."
+            # Decimos solo el primer párrafo
+            resumen = pagina.summary.split('\n')[0]
             enlace = pagina.fullurl
             
             # Creamos una respuesta elegante
@@ -126,7 +126,7 @@ def ejecutar_comando_sistema(comando_dictado):
                 f"Leer más: <{enlace}>"
             )
             print(mensaje)
-            hablar(resumen[:500])
+            hablar(resumen)
         else:
             print(f"ERROR: No encontré información sobre '{busqueda}'. Intenta ser más específico.")
             hablar(f"No encontré información sobre '{busqueda}'")
