@@ -189,25 +189,20 @@ async def bucle_asistente_async():
     r = sr.Recognizer()
     
     micros_disponibles = sr.Microphone.list_microphone_names()
-    indice_trasero = None
-        
-    print("Escaneando hardware de audio disponible...")
+    indice_usb = None
+    
+    print("Escaneando hardware de audio...")
     for i, nombre in enumerate(micros_disponibles):
-        # Imprimimos la lista para que veas cómo Python reconoce los nombres internamente
-        print(f"[{i}] {nombre}") 
-        
-        # Buscamos el panel trasero: puede llamarse "hw:0,0", tener "rear" 
-        # o llamarse "Analog" pero SIN la palabra "Alt" (que es el frontal).
-        if ("hw:0,0" in nombre) or ("rear" in nombre.lower()) or ("ALC662 rev1 Analog" in nombre and "Alt" not in nombre):
-            indice_trasero = i
-            print(f"\n=> Micrófono trasero '{nombre}' mapeado correctamente en el índice {i}")
+        if "USB Audio" in nombre or "AB13X" in nombre:
+            indice_usb = i
+            print(f"Micrófono '{nombre}' mapeado correctamente en el índice {i}")
             break
-                
-    if indice_trasero is None:
-        print("\nNo se encontró el micrófono trasero con los nombres comunes. Usando el predeterminado (0).")
-        indice_trasero = 0
-
-    mic = sr.Microphone(device_index=indice_trasero)
+            
+    if indice_usb is None:
+        print("No se encontró el micrófono USB. Usando el predeterminado (0).")
+        indice_usb = 0
+    
+    mic = sr.Microphone(device_index=indice_usb)
 
     with mic as source:
         print("\nCalibrando estática de fondo por 2 segundos...")
