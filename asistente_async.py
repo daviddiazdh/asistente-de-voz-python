@@ -7,6 +7,7 @@ from datetime import datetime
 from gtts import gTTS
 import asyncio
 import multiprocessing
+import requests
 
 # Configuraciones Globales
 NOMBRE_DEL_SERVIDOR = "servidor"
@@ -72,6 +73,16 @@ def buscar_en_wiki(busqueda):
         print(f"ERROR: No encontré información sobre '{busqueda}'. Intenta ser más específico.")
         return f"No encontré información sobre '{busqueda}'"
 
+
+def obtener_ofertas_steam_api():
+    # Parámetros: Tienda=Steam, En oferta=Sí, Ordenar por=Ahorro, Mínimo de rating en Steam=80%
+    url = "https://www.cheapshark.com/api/1.0/deals?storeID=1&onSale=1&sortBy=Savings&steamRating=80"
+    
+    # Añadimos un header básico para buenas prácticas
+    headers = {'User-Agent': 'MiAsistenteLocal/1.0'}
+    respuesta = requests.get(url, headers=headers).json()
+
+    return respuesta
 
 # ---------------------------------------------------------
 # 3. CEREBRO ASÍNCRONO DEL ASISTENTE
@@ -162,7 +173,28 @@ async def procesar_comando(comando_dictado):
         # Ejecutamos la búsqueda de Wikipedia en un hilo para NO congelar el asistente
         texto_respuesta = await asyncio.to_thread(buscar_en_wiki, busqueda)
         hablar(texto_respuesta)
+
+    elif "ofertas" in comando_dictado or "steam" in comando_dictado:
+        print("Buscando las mejores ofertas en Steam...")
         
+        # Supongamos que esta función hace la petición a CheapShark y devuelve el JSON
+        lista_juegos = await asyncio.to_thread(obtener_ofertas_steam_api)
+        
+        # Hacemos que la voz lea solo el top 3
+        hablar("Estas son las tres mejores ofertas en este momento:")
+        for juego in lista_juegos[:3]:
+            nombre = juego['title']
+            descuento = round(float(juego['savings']))
+            hablar(f"{nombre} con un {descuento} por ciento de descuento.")
+        
+        hablar("He impreso la lista completa con otras 57 ofertas en tu consola.")
+        
+        # Imprimimos la lista masiva en la terminal para que la leas con calma
+        print("\n--- LISTA COMPLETA DE OFERTAS ---")
+        for juego in lista_juegos:
+            print(f"- {juego['title']} - {round(float(juego['savings']))}% off (${juego['salePrice']})")
+        print("---------------------------------\n")
+    
     else:
         print("Comando no reconocido en la lista.")
         hablar("Disculpa, no tengo ese comando.")
@@ -190,7 +222,7 @@ async def bucle_asistente_async():
 
     r.energy_threshold = 150
     r.dynamic_energy_threshold = True
-    
+
     micros_disponibles = sr.Microphone.list_microphone_names()
     indice_usb = None
     
