@@ -2,8 +2,17 @@ import os
 import time
 import speech_recognition as sr
 import subprocess
+import wikipediaapi
 from datetime import datetime
 from gtts import gTTS
+
+wiki = wikipediaapi.Wikipedia(
+    user_agent='AsistenteLocal/1.0 (contacto: daviddiazdh)',
+    language='es',
+    extract_format=wikipediaapi.ExtractFormat.WIKI
+)
+
+NOMBRE_DEL_SERVIDOR = "servidor"
 
 def hablar(texto):
     print(f"Asistente: {texto}")
@@ -99,6 +108,29 @@ def ejecutar_comando_sistema(comando_dictado):
             os.system("amixer -c 0 sset Master 100%")
             hablar("Volumen al máximo.")
 
+    elif "definir" in comando_dictado:
+
+        busqueda = comando_dictado.replace("definir", "").strip()
+
+        pagina = wiki.page(busqueda)
+
+        if pagina.exists():
+            # Tomamos los primeros 1000 caracteres para no llenar el chat
+            resumen = pagina.summary[:1000] + "..."
+            enlace = pagina.fullurl
+            
+            # Creamos una respuesta elegante
+            mensaje = (
+                f"**Concepto: {pagina.title}**\n\n"
+                f"{resumen}\n\n"
+                f"Leer más: <{enlace}>"
+            )
+            print(mensaje)
+            hablar(resumen[:300])
+        else:
+            print(f"ERROR: No encontré información sobre '{busqueda}'. Intenta ser más específico.")
+            hablar(f"No encontré información sobre '{busqueda}'")
+        
     else:
         print("Comando no reconocido en la lista.")
         hablar("Disculpa, no tengo ese comando.")
@@ -145,11 +177,11 @@ def bucle_asistente():
                 texto = r.recognize_google(audio, language="es-VE").lower()
                 
                 # Comprobamos si nos están llamando
-                if "servidor" in texto:
+                if NOMBRE_DEL_SERVIDOR in texto:
                     print(f"¡Te escuché!: \"{texto}\"")
                     
                     # Limpiamos la palabra 'servidor' para quedarnos solo con la orden
-                    comando = texto.replace("servidor", "").strip()
+                    comando = texto.replace(NOMBRE_DEL_SERVIDOR, "").strip()
                     
                     if comando:
                         ejecutar_comando_sistema(comando)
