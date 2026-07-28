@@ -187,9 +187,7 @@ async def procesar_comando(comando_dictado):
             descuento = round(float(juego['savings']))
             top3 += f"{nombre} con un {descuento} por ciento de descuento.\n"
 
-        print(top3)
-        hablar(top3)
-        hablar("He impreso la lista completa con otras 57 ofertas en tu consola.")
+        hablar(top3 + "He impreso la lista completa con otras 57 ofertas en tu consola.")
         
         # Imprimimos la lista masiva en la terminal para que la leas con calma
         print("\n--- LISTA COMPLETA DE OFERTAS ---")
