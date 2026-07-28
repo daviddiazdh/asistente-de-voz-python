@@ -126,7 +126,7 @@ def ejecutar_comando_sistema(comando_dictado):
                 f"Leer más: <{enlace}>"
             )
             print(mensaje)
-            hablar(resumen[:300])
+            hablar(resumen[:500])
         else:
             print(f"ERROR: No encontré información sobre '{busqueda}'. Intenta ser más específico.")
             hablar(f"No encontré información sobre '{busqueda}'")
