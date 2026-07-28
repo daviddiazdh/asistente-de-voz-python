@@ -7,22 +7,18 @@ from gtts import gTTS
 
 def hablar(texto):
     print(f"Asistente: {texto}")
-    
     tts = gTTS(text=texto, lang='es', tld='com.mx')
-    
     archivo_audio = "respuesta.mp3"
     tts.save(archivo_audio)
-
     os.system(f"mpg123 -q -a plug:dmix {archivo_audio}")
     os.remove(archivo_audio)
-
 
 def ejecutar_comando_sistema(comando_dictado):
     print(f"\nProcesando acción para: '{comando_dictado}'")
 
     if "hola" in comando_dictado:
-        print("¡Hola David! Sistema en línea y escuchando.")
-        hablar("Hola David, el sistema está activo.")
+        print("¡Hola, David! Sistema en línea y escuchando.")
+        hablar("Hola, David. El sistema está activo.")
 
     elif "hora" in comando_dictado:
         print("Hora del servidor:")
@@ -42,10 +38,8 @@ def ejecutar_comando_sistema(comando_dictado):
 
     elif "docker" in comando_dictado or "servicios" in comando_dictado:
         print("Contenedores activos en Docker:")
-        # Muestra la tabla bonita en consola
         os.system("sudo docker ps --format 'table {{.Names}}\t{{.Status}}'")
         
-        # Captura SOLAMENTE los nombres para que la voz los lea sin decir IDs extraños
         contenedores = subprocess.getoutput("sudo docker ps --format '{{.Names}}'")
         
         if contenedores.strip():
@@ -58,7 +52,6 @@ def ejecutar_comando_sistema(comando_dictado):
     elif "limpiar" in comando_dictado:
         print("Limpiando caché y temporales...")
         os.system("rm -rf /tmp/* 2>/dev/null || true")
-        # Aquí no hay nada que capturar, solo confirmamos la acción
         hablar("Los archivos temporales han sido vaciados.")
 
     elif "reproduce" in comando_dictado or "pon música" in comando_dictado:
@@ -71,10 +64,10 @@ def ejecutar_comando_sistema(comando_dictado):
         print(f"Buscando música: {cancion}")
         hablar(f"Reproduciendo {cancion}")
         
-        # 1. Matamos cualquier canción que ya esté sonando para no mezclar audios
+        # Matamos cualquier canción que ya esté sonando para no mezclar audios
         os.system("pkill mpv")
         
-        # 2. Armamos el comando forzando la salida de audio por el huequito verde trasero
+        # Armamos el comando forzando la salida de audio por el huequito verde trasero
         comando = [
             "mpv", 
             "--no-video", 
@@ -82,7 +75,7 @@ def ejecutar_comando_sistema(comando_dictado):
             f"ytdl://ytsearch:{cancion}"
         ]
         
-        # 3. Lo lanzamos con Popen (en segundo plano) apagando los textos de error para no ensuciar la consola
+        # Lo lanzamos con Popen (en segundo plano) apagando los textos de error para no ensuciar la consola
         subprocess.Popen(comando, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     elif "detener" in comando_dictado or "silencio" in comando_dictado or "para la música" in comando_dictado:
@@ -113,13 +106,13 @@ def ejecutar_comando_sistema(comando_dictado):
 def bucle_asistente():
     r = sr.Recognizer()
     
-    # --- NUEVO BLOQUE: Búsqueda dinámica del micrófono ---
+    # Búsqueda dinámica del micrófono ---
     micros_disponibles = sr.Microphone.list_microphone_names()
     indice_usb = None
     
     print("Escaneando hardware de audio...")
     for i, nombre in enumerate(micros_disponibles):
-        # Buscamos "USB Audio" o "AB13X" según lo que te arrojó el servidor
+        # Buscamos "USB Audio" o "AB13X"
         if "USB Audio" in nombre or "AB13X" in nombre:
             indice_usb = i
             print(f"Micrófono '{nombre}' mapeado correctamente en el índice {i}")
@@ -163,13 +156,12 @@ def bucle_asistente():
                     else:
                         hablar("¿Sí?, dime.")
                         print("¿Sí? Dime qué comando quieres ejecutar.")
-                    
+                
             except sr.UnknownValueError:
-                # El algoritmo ignora si solo hubo un ruido aleatorio o estática corta
                 pass
             except sr.RequestError as e:
-                print(f" Error de red: {e}")
-                time.sleep(5) # Espera un poco antes de reintentar si cae el internet
+                print(f"Error de red: {e}")
+                time.sleep(5)
             except KeyboardInterrupt:
                 print("\nDesactivando el asistente en bucle. ¡Nos vemos!")
                 break
