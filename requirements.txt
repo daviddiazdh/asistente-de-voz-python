@@ -1,4 +1,4 @@
 SpeechRecognition
 gTTS
 PyAudio
-Wikipedia-Api
+Wikipedia-API
