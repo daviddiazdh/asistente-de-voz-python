@@ -76,7 +76,7 @@ def buscar_en_wiki(busqueda):
 
 def obtener_ofertas_steam_api():
     # Parámetros: Tienda=Steam, En oferta=Sí, Ordenar por=Ahorro, Mínimo de rating en Steam=80%
-    url = "https://www.cheapshark.com/api/1.0/deals?storeID=1&onSale=1&sortBy=Savings&steamRating=80"
+    url = "https://www.cheapshark.com/api/1.0/deals?storeID=1&onSale=1&AAA=1&sortBy=Deal Rating"
     
     # Añadimos un header básico para buenas prácticas
     headers = {'User-Agent': 'MiAsistenteLocal/1.0'}
@@ -177,7 +177,7 @@ async def procesar_comando(comando_dictado):
     elif "ofertas" in comando_dictado or "steam" in comando_dictado:
         print("Buscando las mejores ofertas en Steam...")
         
-        lista_juegos = obtener_ofertas_steam_api()
+        lista_juegos = await asyncio.to_thread(obtener_ofertas_steam_api)
         
         # Hacemos que la voz lea solo el top 3
         top3 = "Estas son las tres mejores ofertas en este momento:\n"
