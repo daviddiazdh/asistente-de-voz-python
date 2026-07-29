@@ -217,7 +217,7 @@ async def procesar_comando(comando_dictado):
             hablar(texto)
             # Imprimimos la lista más larga (hasta 10) en la terminal
             print("\n--- OFERTAS DESTACADAS (PRECIOS LATAM) ---")
-            for juego in lista_juegos[:10]:
+            for juego in lista_juegos[:30]:
                 print(f"🎮 {juego['titulo']} - {juego['descuento']}% off (${juego['precio_actual']} USD)")
             print("------------------------------------------\n")
             
