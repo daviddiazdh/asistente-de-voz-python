@@ -74,15 +74,36 @@ def buscar_en_wiki(busqueda):
         return f"No encontré información sobre '{busqueda}'"
 
 
-def obtener_ofertas_steam_api():
-    # Parámetros: Tienda=Steam, En oferta=Sí, Ordenar por=Ahorro, Mínimo de rating en Steam=80%
-    url = "https://www.cheapshark.com/api/1.0/deals?storeID=1&onSale=1&AAA=1&sortBy=Deal Rating"
+def obtener_ofertas_venezuela():
+    # l=spanish: Idioma en español | cc=VE: Región y precios para Venezuela
+    url = "https://store.steampowered.com/api/featuredcategories/?l=spanish&cc=VE"
     
-    # Añadimos un header básico para buenas prácticas
-    headers = {'User-Agent': 'MiAsistenteLocal/1.0'}
-    respuesta = requests.get(url, headers=headers).json()
-
-    return respuesta
+    try:
+        respuesta = requests.get(url, timeout=5).json()
+        
+        # 'specials' contiene las ofertas destacadas y relevantes de la portada
+        ofertas = respuesta.get('specials', {}).get('items', [])
+        
+        juegos_procesados = []
+        for juego in ofertas:
+            nombre = juego['name']
+            
+            # Steam devuelve el precio en centavos (ej: 1999). Lo dividimos para tener 19.99
+            precio_oferta = juego['final_price'] / 100
+            precio_original = juego['original_price'] / 100
+            descuento = juego['discount_percent']
+            
+            juegos_procesados.append({
+                'titulo': nombre,
+                'precio_actual': precio_oferta,
+                'precio_original': precio_original,
+                'descuento': descuento
+            })
+            
+        return juegos_procesados
+    except Exception as e:
+        print(f"Error consultando Steam: {e}")
+        return []
 
 # ---------------------------------------------------------
 # 3. CEREBRO ASÍNCRONO DEL ASISTENTE
@@ -177,7 +198,7 @@ async def procesar_comando(comando_dictado):
     elif "ofertas" in comando_dictado or "steam" in comando_dictado:
         print("Buscando las mejores ofertas en Steam...")
         
-        lista_juegos = await asyncio.to_thread(obtener_ofertas_steam_api)
+        lista_juegos = await asyncio.to_thread(obtener_ofertas_venezuela)
         
         # Hacemos que la voz lea solo el top 3
         top3 = "Estas son las tres mejores ofertas en este momento:\n"
