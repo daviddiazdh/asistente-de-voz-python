@@ -24,7 +24,7 @@ wiki = wikipediaapi.Wikipedia(
 # ---------------------------------------------------------
 def tarea_hablar(texto):
     """Esta función vive aislada en otro proceso para poder matarla."""
-    print(f"Asistente: {texto}")
+    # print(f"Asistente: {texto}")
     try:
         tts = gTTS(text=texto, lang='es', tld='com.mx')
         # Usamos /tmp y el PID del proceso para que Linux limpie automáticamente la basura
