@@ -196,25 +196,33 @@ async def procesar_comando(comando_dictado):
         hablar(texto_respuesta)
 
     elif "ofertas" in comando_dictado or "steam" in comando_dictado:
-        print("Buscando las mejores ofertas en Steam...")
+        print("Buscando las mejores ofertas regionales en Steam...")
         
+        # Ejecutamos la búsqueda en segundo plano
         lista_juegos = await asyncio.to_thread(obtener_ofertas_venezuela)
         
-        # Hacemos que la voz lea solo el top 3
-        top3 = "Estas son las tres mejores ofertas en este momento:\n"
-        
-        for juego in lista_juegos[:3]:
-            nombre = juego['title']
-            descuento = round(float(juego['savings']))
-            top3 += f"{nombre} con un {descuento} por ciento de descuento.\n"
-
-        hablar(top3 + "He impreso la lista completa con otras 57 ofertas en tu consola.")
-        
-        # Imprimimos la lista masiva en la terminal para que la leas con calma
-        print("\n--- LISTA COMPLETA DE OFERTAS ---")
-        for juego in lista_juegos:
-            print(f"- {juego['title']} - {round(float(juego['savings']))}% off (${juego['salePrice']})")
-        print("---------------------------------\n")
+        if lista_juegos:
+            texto = "Estas son las tres ofertas principales en este momento:\n"
+            
+            # Leemos los primeros 3 para no saturar el audio
+            for juego in lista_juegos[:3]:
+                titulo = juego['titulo']
+                precio = juego['precio_actual']
+                descuento = juego['descuento']
+                
+                # Formateamos el texto para la voz. Ej: "Cyberpunk 2077, con un 50 por ciento de descuento, a 22 dólares con 50 centavos."
+                texto_voz = f"{titulo}, con un {descuento} por ciento de descuento, a {precio} dólares."
+                texto += texto_voz + "\n"
+            
+            hablar(texto)
+            # Imprimimos la lista más larga (hasta 10) en la terminal
+            print("\n--- OFERTAS DESTACADAS (PRECIOS LATAM) ---")
+            for juego in lista_juegos[:10]:
+                print(f"🎮 {juego['titulo']} - {juego['descuento']}% off (${juego['precio_actual']} USD)")
+            print("------------------------------------------\n")
+            
+        else:
+            hablar("No pude conectar con los servidores de Steam.")
     
     else:
         print("Comando no reconocido en la lista.")
