@@ -144,14 +144,19 @@ async def procesar_comando(comando_dictado):
             
             # Lanzamos MPV habilitando el socket de comunicación
             comando = [
-                "mpv", "--no-video", "--audio-device=alsa/plug:dmix", 
-                f"--input-ipc-server={MPV_SOCKET}", 
+                "mpv", 
+                "--no-video", 
+                "--audio-device=alsa/plug:dmix", 
+                f"--input-ipc-server={MPV_SOCKET}",
+                "--ytdl-format=bestaudio",                     # Pide solo audio para evitar bloqueos
+                "--script-opts=ytdl_hook-ytdl_path=yt-dlp",    # Fuerza el uso del yt-dlp actualizado
                 f"ytdl://ytsearch:{cancion}"
             ]
             
             log_file = open("mpv_error.log", "a")
 
-            subprocess.Popen(comando, stdout=log_file, stderr=subprocess.DEVNULL)
+            # Redirigimos stderr a STDOUT para que los errores SI se escriban en mpv_error.log
+            subprocess.Popen(comando, stdout=log_file, stderr=subprocess.STDOUT)
 
     elif "pausa" in comando_dictado:
         print("Pausando música...")
