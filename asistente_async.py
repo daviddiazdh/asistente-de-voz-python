@@ -150,7 +150,8 @@ async def procesar_comando(comando_dictado):
             # 1. yt-dlp busca, descarga el flujo de audio y lo envía a la salida estándar (-)
             comando_ytdl = [
                 "yt-dlp",
-                "-f", "bestaudio",
+                "-f", "bestaudio/best",
+                "--extractor-args", "youtube:player_client=mweb,ios",
                 "-o", "-",
                 f"ytsearch1:{cancion}"
             ]
