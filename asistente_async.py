@@ -145,9 +145,7 @@ async def procesar_comando(comando_dictado):
             # Lanzamos MPV habilitando el socket de comunicación
             comando = [
                 "mpv", "--no-video", "--audio-device=alsa/plug:dmix", 
-                f"--input-ipc-server={MPV_SOCKET}",
-                "--ytdl-format=bestaudio", # <-- MUY IMPORTANTE: Solo pedir el stream de audio
-                "--ytdl-raw-options=extractor-args=youtube:player_client=ios,mweb", # <-- Cambiamos el cliente
+                f"--input-ipc-server={MPV_SOCKET}", 
                 f"ytdl://ytsearch:{cancion}"
             ]
             
