@@ -148,6 +148,7 @@ async def procesar_comando(comando_dictado):
                 f"--input-ipc-server={MPV_SOCKET}", 
                 f"ytdl://ytsearch:{cancion}"
             ]
+            
             log_file = open("mpv_error.log", "a")
 
             subprocess.Popen(comando, stdout=log_file, stderr=subprocess.DEVNULL)
