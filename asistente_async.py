@@ -139,20 +139,47 @@ async def procesar_comando(comando_dictado):
         else:
             print(f"Buscando nueva música: {cancion}")
             hablar(f"Reproduciendo {cancion}")
-            os.system("pkill mpv 2>/dev/null")
+            
+            # Limpiamos procesos previos (incluyendo descargas viejas de yt-dlp)
+            os.system("pkill -9 mpv 2>/dev/null")
+            os.system("pkill -9 yt-dlp 2>/dev/null")
             os.system(f"rm -f {MPV_SOCKET} 2>/dev/null") # Limpiar socket viejo
             
-            # Lanzamos MPV habilitando el socket de comunicación
-            comando = [
-                "mpv", "--no-video", "--audio-device=alsa/plug:dmix", 
-                f"--input-ipc-server={MPV_SOCKET}",
-                "--ytdl-raw-options=verbose=,update=", # <-- Le pasa -v y -U a yt-dlp
-                f"ytdl://ytsearch:{cancion}"
-            ]
-            
             log_file = open("mpv_error.log", "a")
-            # Redirigimos stderr a STDOUT para volcar todo el detalle al log
-            subprocess.Popen(comando, stdout=log_file, stderr=subprocess.STDOUT)
+
+            # 1. yt-dlp busca, descarga el flujo de audio y lo envía a la salida estándar (-)
+            comando_ytdl = [
+                "yt-dlp",
+                "-f", "bestaudio",
+                "-o", "-",
+                f"ytsearch1:{cancion}"
+            ]
+
+            # 2. mpv lee desde la entrada estándar (-) manteniendo el socket de control activo
+            comando_mpv = [
+                "mpv",
+                "--no-video",
+                "--audio-device=alsa/plug:dmix",
+                f"--input-ipc-server={MPV_SOCKET}",
+                "-"
+            ]
+
+            # Lanzamos yt-dlp canalizando su salida directamente hacia mpv
+            proceso_ytdl = subprocess.Popen(
+                comando_ytdl, 
+                stdout=subprocess.PIPE, 
+                stderr=log_file
+            )
+            
+            proceso_mpv = subprocess.Popen(
+                comando_mpv, 
+                stdin=proceso_ytdl.stdout, 
+                stdout=log_file, 
+                stderr=subprocess.STDOUT
+            )
+
+            # Permite que yt-dlp reciba la señal de cierre limpia si mpv se detiene
+            proceso_ytdl.stdout.close()
 
     elif "pausa" in comando_dictado:
         print("Pausando música...")
