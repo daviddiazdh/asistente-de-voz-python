@@ -86,6 +86,7 @@ def ejecutar_comando_sistema(comando_dictado):
         
         # Lo lanzamos con Popen (en segundo plano) apagando los textos de error para no ensuciar la consola
         subprocess.Popen(comando, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        #subprocess.Popen(comando)
 
     elif "detener" in comando_dictado or "silencio" in comando_dictado or "para la música" in comando_dictado:
         print("Deteniendo reproducción...")
@@ -145,15 +146,15 @@ def bucle_asistente():
     print("Escaneando hardware de audio...")
     for i, nombre in enumerate(micros_disponibles):
         # Buscamos "USB Audio" o "AB13X"
-        if "USB Audio" in nombre or "AB13X" in nombre:
+        if "lifecam" in nombre.lower() or "vx-2000" in nombre.lower():
             indice_usb = i
             print(f"Micrófono '{nombre}' mapeado correctamente en el índice {i}")
             break
-            
+    
     if indice_usb is None:
         print("No se encontró el micrófono USB en la lista de PyAudio. Usando el predeterminado (0).")
         print("Hardware detectado:", micros_disponibles)
-        indice_usb = 0
+        indice_usb = 8
     
     mic = sr.Microphone(device_index=indice_usb)
 

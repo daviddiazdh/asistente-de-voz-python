@@ -1,0 +1,266 @@
+{
+    "result": [
+        {
+            "active_time": 1794432137,
+            "biz_type": 18,
+            "category": "dj",
+            "create_time": 1794432137,
+            "icon": "smart/icon/ay1542807455352h5MAC/f2b616b3f7dc71d7e3e243ebf5bac671.png",
+            "id": "eb72862a9c80d1eaaalyes",
+            "ip": "181.208.211.12",
+            "lat": "0",
+            "local_key": "#MO8SB-rPIufZ;$I",
+            "lon": "0",
+            "model": "QPW70-F",
+            "name": "Smart Bulb",
+            "online": true,
+            "owner_id": "324838648",
+            "product_id": "afjgg1386jab674t",
+            "product_name": "Smart Bulb",
+            "status": [
+                {
+                    "code": "switch_led",
+                    "value": false
+                },
+                {
+                    "code": "work_mode",
+                    "value": "colour"
+                },
+                {
+                    "code": "bright_value_v2",
+                    "value": 1000
+                },
+                {
+                    "code": "temp_value_v2",
+                    "value": 300
+                },
+                {
+                    "code": "colour_data_v2",
+                    "value": "{\"h\":240,\"s\":1000,\"v\":1000}"
+                },
+                {
+                    "code": "scene_data_v2",
+                    "value": "{\"scene_num\":1,\"scene_units\":[{\"bright\":200,\"h\":0,\"s\":0,\"temperature\":0,\"unit_change_mode\":\"static\",\"unit_gradient_duration\":13,\"unit_switch_duration\":14,\"v\":0}]}"
+                },
+                {
+                    "code": "countdown_1",
+                    "value": 0
+                },
+                {
+                    "code": "control_data",
+                    "value": ""
+                }
+            ],
+            "sub": false,
+            "time_zone": "-04:00",
+            "uid": "az1794432079166KQqeR",
+            "update_time": 1794432138,
+            "uuid": "e3bac7963231b288",
+            "mapping": {
+                "20": {
+                    "code": "switch_led",
+                    "type": "Boolean",
+                    "values": {}
+                },
+                "21": {
+                    "code": "work_mode",
+                    "type": "Enum",
+                    "values": {
+                        "range": [
+                            "white",
+                            "colour",
+                            "scene",
+                            "music"
+                        ]
+                    }
+                },
+                "22": {
+                    "code": "bright_value_v2",
+                    "type": "Integer",
+                    "values": {
+                        "min": 10,
+                        "scale": 0,
+                        "unit": "",
+                        "max": 1000,
+                        "step": 1
+                    }
+                },
+                "23": {
+                    "code": "temp_value_v2",
+                    "type": "Integer",
+                    "values": {
+                        "min": 0,
+                        "scale": 0,
+                        "unit": "",
+                        "max": 1000,
+                        "step": 1
+                    }
+                },
+                "24": {
+                    "code": "colour_data_v2",
+                    "type": "Json",
+                    "raw_values": "{\"h\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":360,\"step\":1},\"s\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":1000,\"step\":1},\"v\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":1000,\"step\":1}}",
+                    "values": {
+                        "h": {
+                            "min": 0,
+                            "scale": 0,
+                            "unit": "",
+                            "max": 360,
+                            "step": 1
+                        },
+                        "s": {
+                            "min": 0,
+                            "scale": 0,
+                            "unit": "",
+                            "max": 1000,
+                            "step": 1
+                        },
+                        "v": {
+                            "min": 0,
+                            "scale": 0,
+                            "unit": "",
+                            "max": 1000,
+                            "step": 1
+                        }
+                    }
+                },
+                "25": {
+                    "code": "scene_data_v2",
+                    "type": "Json",
+                    "raw_values": "{\"scene_num\":{\"min\":1,\"scale\":0,\"max\":8,\"step\":1},\"scene_units\": {\"unit_change_mode\":{\"range\":[\"static\",\"jump\",\"gradient\"]},\"unit_switch_duration\":{\"min\":0,\"scale\":0,\"max\":100,\"step\":1},\"unit_gradient_duration\":{\"min\":0,\"scale\":0,\"max\":100,\"step\":1},\"bright\":{\"min\":0,\"scale\":0,\"max\":1000,\"step\":1},\"temperature\":{\"min\":0,\"scale\":0,\"max\":1000,\"step\":1},\"h\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":360,\"step\":1},\"s\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":1000,\"step\":1},\"v\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":1000,\"step\":1}}}",
+                    "values": {
+                        "scene_num": {
+                            "min": 1,
+                            "scale": 0,
+                            "max": 8,
+                            "step": 1
+                        },
+                        "scene_units": {
+                            "unit_change_mode": {
+                                "range": [
+                                    "static",
+                                    "jump",
+                                    "gradient"
+                                ]
+                            },
+                            "unit_switch_duration": {
+                                "min": 0,
+                                "scale": 0,
+                                "max": 100,
+                                "step": 1
+                            },
+                            "unit_gradient_duration": {
+                                "min": 0,
+                                "scale": 0,
+                                "max": 100,
+                                "step": 1
+                            },
+                            "bright": {
+                                "min": 0,
+                                "scale": 0,
+                                "max": 1000,
+                                "step": 1
+                            },
+                            "temperature": {
+                                "min": 0,
+                                "scale": 0,
+                                "max": 1000,
+                                "step": 1
+                            },
+                            "h": {
+                                "min": 0,
+                                "scale": 0,
+                                "unit": "",
+                                "max": 360,
+                                "step": 1
+                            },
+                            "s": {
+                                "min": 0,
+                                "scale": 0,
+                                "unit": "",
+                                "max": 1000,
+                                "step": 1
+                            },
+                            "v": {
+                                "min": 0,
+                                "scale": 0,
+                                "unit": "",
+                                "max": 1000,
+                                "step": 1
+                            }
+                        }
+                    }
+                },
+                "26": {
+                    "code": "countdown_1",
+                    "type": "Integer",
+                    "values": {
+                        "unit": "",
+                        "min": 0,
+                        "max": 86400,
+                        "scale": 0,
+                        "step": 1
+                    }
+                },
+                "28": {
+                    "code": "control_data",
+                    "type": "Json",
+                    "raw_values": "{\"change_mode\":{\"range\":[\"direct\",\"gradient\"]}, \"bright\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":1000,\"step\":1}, \"temperature\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":1000,\"step\":1}, \"h\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":360,\"step\":1},\"s\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":255,\"step\":1},\"v\":{\"min\":0,\"scale\":0,\"unit\":\"\",\"max\":255,\"step\":1}}",
+                    "values": {
+                        "change_mode": {
+                            "range": [
+                                "direct",
+                                "gradient"
+                            ]
+                        },
+                        "bright": {
+                            "min": 0,
+                            "scale": 0,
+                            "unit": "",
+                            "max": 1000,
+                            "step": 1
+                        },
+                        "temperature": {
+                            "min": 0,
+                            "scale": 0,
+                            "unit": "",
+                            "max": 1000,
+                            "step": 1
+                        },
+                        "h": {
+                            "min": 0,
+                            "scale": 0,
+                            "unit": "",
+                            "max": 360,
+                            "step": 1
+                        },
+                        "s": {
+                            "min": 0,
+                            "scale": 0,
+                            "unit": "",
+                            "max": 255,
+                            "step": 1
+                        },
+                        "v": {
+                            "min": 0,
+                            "scale": 0,
+                            "unit": "",
+                            "max": 255,
+                            "step": 1
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "success": true,
+    "t": 1794440555156,
+    "tid": "9213a3ddde2911f1961512e57f19aa71",
+    "file": {
+        "name": "tuya-raw.json",
+        "description": "Full raw list of Tuya devices.",
+        "account": "p8f97fsham5a9n74qun4",
+        "date": "2026-11-11T19:42:36.129671",
+        "tinytuya": "1.20.0"
+    }
+}
