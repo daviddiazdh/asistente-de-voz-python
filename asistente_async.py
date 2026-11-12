@@ -11,13 +11,26 @@ import requests
 import socket
 import json
 import shutil
+import tinytuya
 
-# Configuraciones Globales
+# ---------------------------------------------------------
+# CONFIGURACIONES GLOBALES Y HARDWARE
+# ---------------------------------------------------------
 NOMBRE_DEL_SERVIDOR = "servidor"
 proceso_voz = None
 proceso_mpv = None
 proceso_ytdl = None
 mpv_socket_actual = None  # Ruta dinámica del socket activo
+
+# Datos del bombillo Tuya QPW70-F
+DEVICE_ID = "eb72862a9c80d1eaaalyes"
+DEVICE_IP = "192.168.101.87"
+LOCAL_KEY = "#MO8SB-rPIufZ;$I"
+
+bulb = tinytuya.BulbDevice(DEVICE_ID, DEVICE_IP, LOCAL_KEY)
+bulb.set_version(3.3)
+bulb.set_socketPersistent(False)
+bulb.set_socketTimeout(3)
 
 wiki = wikipediaapi.Wikipedia(
     user_agent='AsistenteLocal/1.0 (contacto: daviddiazdh)',
@@ -57,7 +70,39 @@ def hablar(texto):
 
 
 # ---------------------------------------------------------
-# 2. FUNCIONES DE RED / BÚSQUEDA Y CONTROL MPV
+# 2. CONTROL DEL BOMBILLO TUYA
+# ---------------------------------------------------------
+def controlar_bombillo(accion, **kwargs):
+    """Envía comandos al bombillo Tuya en un hilo separado."""
+    try:
+        if accion == "encender":
+            bulb.turn_on()
+        elif accion == "apagar":
+            bulb.turn_off()
+        elif accion == "blanco":
+            bulb.turn_on()
+            bulb.set_multiple_values({
+                '21': 'white',                        # Modo luz blanca
+                '22': kwargs.get('brillo', 1000),     # Brillo (10 a 1000)
+                '23': kwargs.get('temperatura', 300)  # Temperatura (0 cálido - 1000 frío)
+            })
+        elif accion == "color":
+            bulb.turn_on()
+            r, g, b = kwargs['rgb']
+            bulb.set_colour(r, g, b)
+        elif accion == "brillo":
+            bulb.turn_on()
+            bulb.set_multiple_values({
+                '22': kwargs['valor']
+            })
+        return True
+    except Exception as e:
+        print(f"[ERROR TUYA] No se pudo comunicar con el bombillo: {e}")
+        return False
+
+
+# ---------------------------------------------------------
+# 3. FUNCIONES DE RED / BÚSQUEDA Y CONTROL MPV
 # ---------------------------------------------------------
 def limpiar_socket(ruta_socket):
     """Elimina el archivo de socket si existe."""
@@ -139,7 +184,7 @@ def obtener_ofertas_venezuela():
 
 
 # ---------------------------------------------------------
-# 3. CEREBRO ASÍNCRONO DEL ASISTENTE
+# 4. CEREBRO ASÍNCRONO DEL ASISTENTE
 # ---------------------------------------------------------
 async def procesar_comando(comando_dictado):
     global proceso_voz, proceso_mpv, proceso_ytdl, mpv_socket_actual
@@ -169,6 +214,66 @@ async def procesar_comando(comando_dictado):
     elif "limpiar" in comando_dictado:
         os.system("rm -rf /tmp/respuesta_*.mp3 2>/dev/null || true")
         hablar("Los archivos temporales han sido vaciados.")
+
+    # --- CONTROLES DEL BOMBILLO TUYA ---
+    elif any(p in comando_dictado for p in ["enciende la luz", "prende la luz", "enciende el bombillo", "prende el bombillo", "enciende luz"]):
+        ok = await asyncio.to_thread(controlar_bombillo, "encender")
+        hablar("Luz encendida." if ok else "No pude conectar con el bombillo.")
+
+    elif any(p in comando_dictado for p in ["apaga la luz", "apaga el bombillo", "apaga luz"]):
+        ok = await asyncio.to_thread(controlar_bombillo, "apagar")
+        hablar("Luz apagada." if ok else "No pude conectar con el bombillo.")
+
+    elif any(p in comando_dictado for p in ["luz blanca", "color blanco", "modo blanco", "luz cálida"]):
+        ok = await asyncio.to_thread(controlar_bombillo, "blanco", brillo=1000, temperatura=300)
+        hablar("Luz blanca activada." if ok else "Error al cambiar a luz blanca.")
+
+    elif "luz fría" in comando_dictado:
+        ok = await asyncio.to_thread(controlar_bombillo, "blanco", brillo=1000, temperatura=1000)
+        hablar("Luz blanca fría activada." if ok else "Error al cambiar la temperatura.")
+
+    elif "rojo" in comando_dictado or "roja" in comando_dictado:
+        ok = await asyncio.to_thread(controlar_bombillo, "color", rgb=(255, 0, 0))
+        hablar("Luz en rojo." if ok else "Error al cambiar el color.")
+
+    elif "azul" in comando_dictado:
+        ok = await asyncio.to_thread(controlar_bombillo, "color", rgb=(0, 0, 255))
+        hablar("Luz en azul." if ok else "Error al cambiar el color.")
+
+    elif "verde" in comando_dictado:
+        ok = await asyncio.to_thread(controlar_bombillo, "color", rgb=(0, 255, 0))
+        hablar("Luz en verde." if ok else "Error al cambiar el color.")
+
+    elif "morado" in comando_dictado or "morada" in comando_dictado or "violeta" in comando_dictado:
+        ok = await asyncio.to_thread(controlar_bombillo, "color", rgb=(160, 0, 255))
+        hablar("Luz en morado." if ok else "Error al cambiar el color.")
+
+    elif "amarillo" in comando_dictado or "amarilla" in comando_dictado:
+        ok = await asyncio.to_thread(controlar_bombillo, "color", rgb=(255, 200, 0))
+        hablar("Luz en amarillo." if ok else "Error al cambiar el color.")
+
+    elif "naranja" in comando_dictado:
+        ok = await asyncio.to_thread(controlar_bombillo, "color", rgb=(255, 80, 0))
+        hablar("Luz en naranja." if ok else "Error al cambiar el color.")
+
+    elif "rosado" in comando_dictado or "rosa" in comando_dictado:
+        ok = await asyncio.to_thread(controlar_bombillo, "color", rgb=(255, 20, 147))
+        hablar("Luz en rosado." if ok else "Error al cambiar el color.")
+
+    elif "cian" in comando_dictado or "celeste" in comando_dictado:
+        ok = await asyncio.to_thread(controlar_bombillo, "color", rgb=(0, 255, 255))
+        hablar("Luz en celeste." if ok else "Error al cambiar el color.")
+
+    elif "brillo" in comando_dictado:
+        if "máximo" in comando_dictado or "sube" in comando_dictado or "cien" in comando_dictado:
+            ok = await asyncio.to_thread(controlar_bombillo, "brillo", valor=1000)
+            hablar("Brillo al máximo." if ok else "Error al ajustar el brillo.")
+        elif "medio" in comando_dictado or "mitad" in comando_dictado:
+            ok = await asyncio.to_thread(controlar_bombillo, "brillo", valor=500)
+            hablar("Brillo al cincuenta por ciento." if ok else "Error al ajustar el brillo.")
+        elif "baja" in comando_dictado or "bajo" in comando_dictado or "mínimo" in comando_dictado:
+            ok = await asyncio.to_thread(controlar_bombillo, "brillo", valor=150)
+            hablar("Brillo reducido." if ok else "Error al ajustar el brillo.")
 
     # --- CONTROLES DE MÚSICA Y MPV ---
     elif "reproduce" in comando_dictado or "pon música" in comando_dictado or "reanuda" in comando_dictado:
@@ -297,7 +402,7 @@ async def procesar_comando(comando_dictado):
 
 
 # ---------------------------------------------------------
-# 4. BUCLE DE ESCUCHA INFINITO
+# 5. BUCLE DE ESCUCHA INFINITO
 # ---------------------------------------------------------
 def escuchar_microfono(r, source):
     try:
@@ -336,7 +441,7 @@ async def bucle_asistente_async():
         await asyncio.to_thread(r.adjust_for_ambient_noise, source, duration=2)
         r.dynamic_energy_threshold = True
 
-        hablar("El sistema de audio está cien por ciento operativo.")
+        hablar("El sistema de audio y la iluminación están cien por ciento operativos.")
         print("Esperando comandos...")
 
         while True:
