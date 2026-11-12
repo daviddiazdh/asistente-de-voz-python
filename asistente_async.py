@@ -10,6 +10,7 @@ import multiprocessing
 import requests
 import socket
 import json
+import shutil
 
 # Configuraciones Globales
 NOMBRE_DEL_SERVIDOR = "servidor"
@@ -93,6 +94,7 @@ def obtener_ofertas_venezuela():
 # 3. CEREBRO ASÍNCRONO DEL ASISTENTE
 # ---------------------------------------------------------
 async def procesar_comando(comando_dictado):
+    global proceso_voz
     print(f"\nProcesando acción para: '{comando_dictado}'")
 
     if "hola" in comando_dictado:
@@ -144,14 +146,17 @@ async def procesar_comando(comando_dictado):
             os.system("pkill -9 mpv 2>/dev/null")
             os.system("pkill -9 yt-dlp 2>/dev/null")
             os.system(f"rm -f {MPV_SOCKET} 2>/dev/null") # Limpiar socket viejo
-            
+            if proceso_voz and proceso_voz.is_alive():
+                 await asyncio.to_thread(proceso_voz.join)
+
             log_file = open("mpv_error.log", "a")
+            ruta_ytdlp = shutil.which("yt-dlp") or "yt-dlp"
 
             # 1. yt-dlp busca, descarga el flujo de audio y lo envía a la salida estándar (-)
             comando_ytdl = [
-                "yt-dlp",
+                ruta_ytdlp,
                 "-f", "bestaudio/best",
-                "--extractor-args", "youtube:player_client=mweb,ios",
+                "--no-playlist",
                 "-o", "-",
                 f"ytsearch1:{cancion}"
             ]
@@ -160,7 +165,7 @@ async def procesar_comando(comando_dictado):
             comando_mpv = [
                 "mpv",
                 "--no-video",
-                "--audio-device=alsa/plug:dmix",
+                "--audio-device=alsa/plughw:0,0",
                 f"--input-ipc-server={MPV_SOCKET}",
                 "-"
             ]
@@ -209,7 +214,6 @@ async def procesar_comando(comando_dictado):
         os.system("pkill mpv 2>/dev/null")
         os.system("pkill mpg123 2>/dev/null")
         
-        global proceso_voz
         if proceso_voz and proceso_voz.is_alive():
             proceso_voz.terminate()
             proceso_voz.join()
@@ -271,12 +275,12 @@ async def bucle_asistente_async():
     indice_usb = None
     
     for i, nombre in enumerate(micros_disponibles):
-        if "USB Audio" in nombre or "AB13X" in nombre:
+        if "lifecam" in nombre.lower() or "vx-2000" in nombre.lower():
             indice_usb = i
             break
             
     if indice_usb is None:
-        indice_usb = 0
+        indice_usb = 8
     
     mic = sr.Microphone(device_index=indice_usb)
 
