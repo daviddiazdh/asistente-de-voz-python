@@ -48,8 +48,8 @@ def tarea_hablar(texto):
         archivo_audio = f"/tmp/respuesta_{multiprocessing.current_process().pid}.mp3"
         tts.save(archivo_audio)
 
-        # Salida gestionada automáticamente por PipeWire
-        os.system(f"mpg123 -q {archivo_audio}")
+        # Salida forzada a través de PipeWire/PulseAudio para no bloquear ALSA
+        os.system(f"mpg123 -o pulse -q {archivo_audio}")
         if os.path.exists(archivo_audio):
             os.remove(archivo_audio)
     except Exception as e:
@@ -426,13 +426,20 @@ async def bucle_asistente_async():
     micros_disponibles = sr.Microphone.list_microphone_names()
     indice_usb = None
 
+    # Prioriza PipeWire/PulseAudio para no bloquear el dispositivo USB ALSA
     for i, nombre in enumerate(micros_disponibles):
-        if "lifecam" in nombre.lower() or "vx-2000" in nombre.lower():
+        if nombre.lower() in ("pipewire", "pulse", "default"):
             indice_usb = i
+            print(f"Usando servidor de audio [{i}]: {nombre}")
             break
 
+    # Respaldo directo al micrófono USB si no aparece el servidor virtual
     if indice_usb is None:
-        indice_usb = 8
+        for i, nombre in enumerate(micros_disponibles):
+            if "lifecam" in nombre.lower() or "vx-2000" in nombre.lower():
+                indice_usb = i
+                print(f"Micrófono USB directo [{i}]: {nombre}")
+                break
 
     mic = sr.Microphone(device_index=indice_usb)
 
