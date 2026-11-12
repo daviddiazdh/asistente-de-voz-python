@@ -35,7 +35,8 @@ def tarea_hablar(texto):
         archivo_audio = f"/tmp/respuesta_{multiprocessing.current_process().pid}.mp3"
         tts.save(archivo_audio)
 
-        os.system(f"mpg123 -q -a plughw:0,0 {archivo_audio}")
+        # Salida gestionada automáticamente por PipeWire
+        os.system(f"mpg123 -q {archivo_audio}")
         if os.path.exists(archivo_audio):
             os.remove(archivo_audio)
     except Exception as e:
@@ -193,7 +194,6 @@ async def procesar_comando(comando_dictado):
 
             detener_reproduccion()
 
-            # Esperamos a que mpg123 libere plughw:0,0 antes de abrir mpv
             if proceso_voz and proceso_voz.is_alive():
                 await asyncio.to_thread(proceso_voz.join)
 
@@ -202,6 +202,7 @@ async def procesar_comando(comando_dictado):
 
             comando_ytdl = [
                 ruta_ytdlp,
+                "--js-runtimes", "node",
                 "-f", "bestaudio/best",
                 "--no-playlist",
                 "-o", "-",
@@ -211,7 +212,7 @@ async def procesar_comando(comando_dictado):
             comando_mpv = [
                 "mpv",
                 "--no-video",
-                "--audio-device=alsa/plughw:0,0",
+                "--audio-device=auto",
                 f"--input-ipc-server={mpv_socket_actual}",
                 "-"
             ]
