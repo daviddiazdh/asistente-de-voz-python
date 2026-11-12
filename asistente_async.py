@@ -267,13 +267,13 @@ async def procesar_comando(comando_dictado):
 
     elif "volumen" in comando_dictado:
         if "subir" in comando_dictado or "más" in comando_dictado:
-            os.system("amixer -c 0 sset Master 10%+")
+            os.system("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 10%+")
             hablar("Volumen arriba.")
         elif "bajar" in comando_dictado or "menos" in comando_dictado:
-            os.system("amixer -c 0 sset Master 10%-")
+            os.system("wpctl set-volume @DEFAULT_AUDIO_SINK@ 10%-")
             hablar("Volumen abajo.")
         elif "máximo" in comando_dictado:
-            os.system("amixer -c 0 sset Master 100%")
+            os.system("wpctl set-volume @DEFAULT_AUDIO_SINK@ 1.0")
             hablar("Volumen al máximo.")
 
     elif "definir" in comando_dictado:
