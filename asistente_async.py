@@ -24,7 +24,7 @@ mpv_socket_actual = None  # Ruta dinámica del socket activo
 
 # Datos del bombillo Tuya QPW70-F
 DEVICE_ID = "eb72862a9c80d1eaaalyes"
-DEVICE_IP = "192.168.101.71"
+DEVICE_IP = "Auto"
 LOCAL_KEY = "#MO8SB-rPIufZ;$I"
 
 bulb = tinytuya.BulbDevice(DEVICE_ID, DEVICE_IP, LOCAL_KEY)
