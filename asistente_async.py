@@ -272,7 +272,7 @@ async def procesar_comando(comando_dictado):
             ok = await asyncio.to_thread(controlar_bombillo, "brillo", valor=500)
             hablar("Brillo al cincuenta por ciento." if ok else "Error al ajustar el brillo.")
         elif "baja" in comando_dictado or "bajo" in comando_dictado or "mínimo" in comando_dictado:
-            ok = await asyncio.to_thread(controlar_bombillo, "brillo", valor=150)
+            ok = await asyncio.to_thread(controlar_bombillo, "brillo", valor=80)
             hablar("Brillo reducido." if ok else "Error al ajustar el brillo.")
 
     # --- CONTROLES DE MÚSICA Y MPV ---
